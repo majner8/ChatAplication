@@ -11,10 +11,10 @@ public final class MainSocketComunication {
 	public static enum MainSocketComunicationEnum {
 		UserInteraction(), ChatComunication(),AplicationInteraction(), PotvrzeniPrijetiZpravy();
 	}
-
+	
 	public static class ChatComunication {
 
-		public static void CallAppropriateTask(SocketovaKomunikace socketMessage, ChatComunicationInterface inter)
+		public static void CallAppropriateTask(SocketComunication socketMessage, ChatComunicationInterface inter)
 				throws SQLException {
 
 			ChatComunicationEnum Type = null;// dodělat az bude socketMessageHotova
@@ -31,12 +31,12 @@ public final class MainSocketComunication {
 
 		public static interface ChatComunicationInterface {
 
-			public void SendMessage(SocketovaKomunikace Message) throws SQLException;
+			public void SendMessage(SocketComunication Message) throws SQLException;
 
 			public void MessageWasProcess() throws SQLException;
-			public void ChangeMessage(SocketovaKomunikace Message) throws SQLException;
+			public void ChangeMessage(SocketComunication Message) throws SQLException;
 
-			public void SenderShowMessage(SocketovaKomunikace Message) throws SQLException;
+			public void SenderShowMessage(SocketComunication Message) throws SQLException;
 
 		}
 
@@ -56,13 +56,14 @@ public final class MainSocketComunication {
 				return y;
 			} 
 
+		
 		}
 
 	}
 
 	public static class UserInteraction {
 
-		public static void CallAppropriateTask(UserInteractionEnum UserEnum, SocketovaKomunikace Message,
+		public static void CallAppropriateTask(UserInteractionEnum UserEnum, SocketComunication Message,
 				UserInteractionInterface UserInterface) {
 
 		}
@@ -92,7 +93,7 @@ public final class MainSocketComunication {
 
 	public static class AplicationInteraction {
 
-		public static void CallAppropriateTask(AplicationInteraction AplicationEnum, SocketovaKomunikace Message,
+		public static void CallAppropriateTask(AplicationInteraction AplicationEnum, SocketComunication Message,
 				AplicationInteractionInterface AplicationInterface) {
 
 		}

@@ -52,11 +52,11 @@ public class SocketComunication {
 	 * @throws CertificatIsNotSameException If a certificat putted as argument is not same as certificate inside message
 	 */
 	public static SocketComunication CreateMessage(String message,String Certificate) throws IncorectFormatTaskSocketComunicationException, CertificatIsNotSameException {
-		// certificate+ task.. second is recipient and and third is final Message
+		// certificat
 		// if a recipient is server, value is null
 		// if a certificat has not gived yet, certifilat ""
-		// \/UUID adresata\/\/UUID sender\/message
-
+		// certifikat/FirstTask/listOFTask/\/UUID adresata\/\/UUID sender\/message
+		//Pokud skupinovy chatListOFTask/skupinovy/OdesilatelUUIDServeruzaToAdresat
 		
 		String[] tasks=message.split(SocketComunication.finalDevideCharacter,4);
 		String RestMessage;
@@ -162,43 +162,31 @@ public class SocketComunication {
 
 	
 	
-	
+	/** Method return a String value which is representing message, in case with message*/
 	public String getOutputMessage(String certifikat) {
 	// asdads\UUID zpravy\prvniTask\tasky v poradi\/message
 	// UUID adresata\/\/UUID sender\/message
 	// pokud je treba napsat \/ pise se s escapovanim tj /\/
 	
-	String message=certifikat+this.DevideCharacter+this.UNIQUDECodeMessage+this.DevideCharacter+this.FirstTask;
-	String [] tasks=null;
-	int y=0;
+	String message=certifikat+this.DevideCharacter+this.UNIQUDECodeMessage+this.DevideCharacter+this.FirstTask.toString();
+	Object [] tasks=null;
 	if(this.UserTask!=null) {
-		tasks=new String[this.UserTask.length];
-		for(UserInteractionEnum x:this.UserTask) {
-			tasks[y]=x.name();
-		}
+		tasks=this.UserTask;
 	}
-	
 	if(this.ChatTask!=null) {
-		tasks=new String[this.ChatTask.length];
-		for(ChatComunicationEnum x:this.ChatTask) {
-			tasks[y]=x.name();
-		}
+		tasks=this.ChatTask;
 	}
-	
 	if(this.AplicationTask!=null) {
-		tasks=new String[this.AplicationTask.length];
-		for(AplicationInteractionEnum x:this.AplicationTask) {
-			tasks[y]=x.name();
-		}
+		tasks=this.AplicationTask;
 	}
-	
-	
-	String TasksMessage=null;
 	if(tasks!=null) {
-	message=message+this.DevideCharacter+String.join(this.DevideCharacter, tasks)+this.finalDevideCharacter+this.Recipient+this.finalDevideCharacter+this.UUIDSender+this.finalDevideCharacter+this.Message;
+		for(Object x:tasks) {
+			message=message+this.DevideCharacter+x.toString();
+		}	
 	}
-	
-	return message;
+		message=message+this.finalDevideCharacter;
+		message=message+this.Recipient+this.finalDevideCharacter+this.UUIDSender+this.finalDevideCharacter+this.Message;
+		return message;
 	
 }
 

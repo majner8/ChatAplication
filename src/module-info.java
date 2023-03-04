@@ -6,4 +6,5 @@
  *
  */
 module ChatAplication {
+	requires java.sql;
 }

@@ -8,8 +8,12 @@ public class ChatConnection {
 
 	private final List<ActiveUser> UserUUID;
 	
-	public void
 
+
+	public void SendMessage(SocketComunication message) {
+		
+	}
+	
 	
 	
 
