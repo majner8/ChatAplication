@@ -3,7 +3,7 @@ package Server.User;
 
 
 
-public class UserConnection extends DatabazovaKomunikaceUser{
+public class UserConnection {
 
 
 	private HashMap<String,Connection> MapaAktivnichConnectionUzivatele=new HashMap<String,Connection>();

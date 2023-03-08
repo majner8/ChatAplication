@@ -7,14 +7,18 @@ import java.util.Set;
 
 import Exception.ActiveUserRunTimeException;
 import PomocneTridy.UniqueHashMap;
+import Server.Database.UserDatabaseConnection;
 
 /** Class which keep User UUID and his UserConnection instance, if a User is online.
  * Other class such as chatConnection referencing this user.
  */
-public class ActiveUser {
+public class ActiveUser extends UserDatabaseConnection{
 	
 	private final String UserUUDI;
 	private volatile UserConnection User=null;
+	private volatile UserDatabaseConnection DatabaseUserConnection=null;
+
+	
 	//collection for ActiveUser, or User which is reference.
 	private static UniqueHashMap<String,ActiveUser> ActiveUser=new UniqueHashMap<String,ActiveUser>();
 	
@@ -41,7 +45,7 @@ public class ActiveUser {
 		
 	}
 	
-	
+
 	
 	
 	private ActiveUser(String UserUUID) {

@@ -20,18 +20,18 @@ import Server.Main;
 import Server.Enum.NasvPara;
 import Server.Enum.SocketParametr;
 import Server.ZpracovaniTasku.UserConnection;
+import Server.Database.UserDeviceDatabaseConnection;
 
 /** Trida zajistujici komunikaci s danym zarizenim*/
-public class Connection {
+public class Connection extends UserDeviceDatabaseConnection{
 	private final UserConnection Uzivatel;
 	private final String Certifikat;
 
 	/** UserConnection, Object daneho uzivatele*/
+	
 	public Connections (UserConnection Uzivatel,String Certifikat) {
 		this.Uzivatel=Uzivatel;
-		this.Certifikat=Certifikat;
-		
-		
+		this.Certifikat=Certifikat;	
 	}
 	
 	/** Vytvori Spojeni a nastavy dany socket, podle typu socketu Fast/Slow, 

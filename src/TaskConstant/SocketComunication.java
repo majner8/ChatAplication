@@ -111,6 +111,7 @@ public class SocketComunication {
 		}
 		
 		if(firstTask==MainSocketComunicationEnum.ChatComunication) {
+		
 			return new SocketComunication(UUIDMessage,sender,recipient,finalMessage,firstTask,ChatComunicationEnum.getListOFEnumValue(tasks,3));
 
 		}
@@ -124,23 +125,9 @@ public class SocketComunication {
 	/** Metod create new SocketComunication Object with different parametr which is putted as argument 
 	 * If you want to keep parametr, put null as argument
 	 * Method does not support changing First Task*/
-	public SocketComunication createCopyWithDifferentParametr(String[] tasks,String recipient,String finalMessage,String sender,String UUIDMessage
+	public SocketComunication createCopyWithDifferentParametr(Object[] tasks,String recipient,String finalMessage,String sender,String UUIDMessage
 		) {
-		if(tasks==null) {
-			// az budou dodelane metody tasks.. 
-			if(this.AplicationTask!=null) {
-				tasks=
-			}
-			else if(this.ChatTask!=null) {
-				tasks=
-			}
-			else if(this.UserTask!=null) {
-				tasks=
-			}
-			else {
-				throw new EnumSyntaxeError();
-			}
-		}
+		String []taskss=this.MakeFieldFromTasksList(tasks);
 		
 		
 		if(recipient==null) {
@@ -157,7 +144,7 @@ public class SocketComunication {
 		} 
 		
 			
-		return this.CreateSocketComunicationByFirstTask(this.getFirstTask(), tasks,recipient, finalMessage, sender, UUIDMessage);
+		return this.CreateSocketComunicationByFirstTask(this.getFirstTask(), taskss,recipient, finalMessage, sender, UUIDMessage);
 	}
 
 	
@@ -169,17 +156,8 @@ public class SocketComunication {
 	// pokud je treba napsat \/ pise se s escapovanim tj /\/
 	
 	String message=certifikat+this.DevideCharacter+this.UNIQUDECodeMessage+this.DevideCharacter+this.FirstTask.toString();
-	Object [] tasks=null;
-	if(this.UserTask!=null) {
-		tasks=this.UserTask;
-	}
-	if(this.ChatTask!=null) {
-		tasks=this.ChatTask;
-	}
-	if(this.AplicationTask!=null) {
-		tasks=this.AplicationTask;
-	}
-	if(tasks!=null) {
+	Object [] tasks;	
+	if((tasks=this.MakeFieldFromTasksList(null))!=null) {
 		for(Object x:tasks) {
 			message=message+this.DevideCharacter+x.toString();
 		}	
@@ -190,6 +168,31 @@ public class SocketComunication {
 	
 }
 
+	private String []MakeFieldFromTasksList(Object [] tasks){
+		(String[])tasks;
+		
+		if(tasks==null) {
+		if(this.UserTask!=null) {
+			tasks=this.UserTask;
+		}
+		if(this.ChatTask!=null) {
+			tasks=this.ChatTask;
+		}
+		if(this.AplicationTask!=null) {
+			tasks=this.AplicationTask;
+		}
+		if(tasks==null) {
+			return null;
+		}
+		}
+		String[] returns=new String[tasks.length];
+		int y=0;
+		for(Object x:tasks) {
+			returns[y]=x.toString();
+		}
+		return returns;
+	}
+	
 	private SocketComunication(String uNIQUDECodeMessage, String uUIDSender, String recipient, 
 			String message,
 			MainSocketComunicationEnum firstTask, AplicationInteractionEnum []aplicationTask){
