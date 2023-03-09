@@ -1,75 +1,120 @@
 package Server.Database;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
 import Exception.sqlException;
 import Exception.sqlException.EnumSQLException;
-import Server.User.Connection;
 
 public abstract class MainDatabase {
 
 	
-	public static String [] getListOfProcessTaskdatabaseTaskType ( databaseTaskType TypeOfTask,String tableName,ArrayList<String> columnValue) {
+	public static ArrayList<String> getListOfProcessTaskdatabaseTaskType ( MaindatabaseTaskType TypeOfTask,String tableName,ArrayList<String> columnValue) {
 		ArrayList<String>  returns=new ArrayList<String>();
 		String task;
 	
-		if(TypeOfTask==databaseTaskType.createChatTable) {
-			//create new table for Chat
-			task=MainDatabase.replaceTableName(TypeOfTask.getTask(), tableName);
-			task=MainDatabase.replaceListOfCharacter(task, columnValue);
-			returns.add(task);
+		if(TypeOfTask==MaindatabaseTaskType.createChatTable) {
+			//Generate task for  creating new table for Chat
+			returns.add(MainDatabase.replaceTableNameAndListOfCharacter(databaseTaskType.createChatTable.getTask(), tableName, columnValue));
+			//generate task for creating table with permision for each User.
+			returns.add(MainDatabase.replaceTableNameAndListOfCharacter(databaseTaskType.createPermisionTable.getTask(), tableName, columnValue));
+		
 			
+			//generate task for creating trigger, which set every new message into User quick message table.
+			task=MainDatabase.replaceTableNameAndListOfCharacter(databaseTaskType.createInsertTrigger.getTask(), tableName, null);		
 			
+			String [] tasks=task.split(DatabaseParametr.BeginFunction.getCharacter());	
+					//method set a begining of trigger
+			String beginOfTrigger=tasks[0];
+			tasks=tasks[1].split(DatabaseParametr.EndFunction.getCharacter());
+				//set a patern 
+			String patern=tasks[0];
+				// set end of trigger
+			String EndOfTrigger=tasks[1];
+			patern=patern.trim().repeat(columnValue.size());
+		
+			String message=String.format("%s %s %s %s %s", beginOfTrigger,
+					DatabaseParametr.BeginFunction.getCharacter(),
+					patern,DatabaseParametr.EndFunction.getCharacter()
+					,EndOfTrigger);
+			Iterator<String> it=columnValue.iterator();
+			while(it.hasNext()) {
+				message.replace(DatabaseParametr.CollectionsCharacter.getCharacter(), it.next());
+			}
 			
-			return new String[] {task};
+			returns.add(message);
+			
+			return returns;
 		}
 		return null;
 		
 	}
+
+	/** Method replace table name and List of element, which is representing for example list of user, which is joined into this chat
+	 * @param message It is representing rought patern of SQL for each command. 
+	 * @param tablename it is representing table name
+	 * @param listOfReplacement it is representing list of user, or other column value.
+	 *  if you do not have, put null instead*/
+	private static String replaceTableNameAndListOfCharacter(String message, String tablename,
+			ArrayList<String> listOfReplacement) {
+
+		if (message == null || tablename == null) {
+			throw new NullPointerException("Parametr message and tablename are not allowed to equal null");
+		}
+		//method replace TableName character by TableName
+		message.replaceAll(DatabaseParametr.TableNameCharacter.getCharacter(), tablename);
 	
-	
-	private static String replaceTableName(String message,String replacement) 
-	{
-		return message.replace(DatabaseParametr.TableNameCharacter.getCharacter(),replacement);}
-	
-	private static String replaceListOfCharacter(String message,String[] listOfReplacement) {
-		String [] list=message.split(DatabaseParametr.DivedeCharacterColumn.getCharacter());
-		for(String x:list) {
-			if(x.contains(DatabaseParametr.CollectionsCharacter.getCharacter())) {
-				if(x.matches(".*\\)\s*\\).*")) {
+		// method verify, if have to replace List OF user
+		if (listOfReplacement != null) {
+			
+			String[] list = message.split(DatabaseParametr.DivedeCharacterColumn.getCharacter());
+		
+			for(int i=0;i<list.length;i++) {
+			
+				if (list[i].contains(DatabaseParametr.CollectionsCharacter.getCharacter())) {
 					
+					String startMessage="";
+					String patern=list[i];
+					String endMessage="";
+					//method ask if a represent of ListOfUser is a first argument
+					if (list[i].matches(".*\\)\s*;.*")) {
+						String [] xx=list[i].split("\\)\s*;.*");
+						patern=xx[0];			
+						endMessage=list[i].split(patern)[0];
+					}
+					//method ask if a represent of ListOfUser is last argument
+					else if(list[i].matches(".*\\(\s*"+DatabaseParametr.CollectionsCharacter.getCharacter())) {
+						String[] xx;
+						// fucntion verify, chance that SQL format has only one 
+						// parametr which is character of List OfUser
+						if(!patern.equals(list[i])) {
+							xx=patern.split(".*\\(\s*");
+						}
+						else{xx=list[i].split(".*\\(\s*");
+						}
+						patern=xx[0];
+						startMessage=list[i].split(patern)[0];
+					}
+					
+					patern=patern+" ";
+					patern=patern.repeat(listOfReplacement.size());
+					list[i]=startMessage+patern+endMessage;
+					break;
 				}
-				break;
 			}
 			
-		}
-		
-	
-		
-			
-		
-		String variable=" "+list[1].trim().split("\\)")[0];
-		String Restmessage=list[0];
-		Iterator<String>it=listOfReplacement.iterator();
-		while(it.hasNext()) {			
-			Restmessage=Restmessage+it.next()+variable;
-			if(it.hasNext()) {
-				Restmessage=Restmessage+",";
+			message=String.join(",",list);
+			Iterator<String> it=listOfReplacement.iterator();
+			while(it.hasNext()) {
+				message.replace(DatabaseParametr.CollectionsCharacter.getCharacter(), it.next());
 			}
-		}
-		Restmessage=Restmessage+");";
-		return Restmessage;
+		}		
+		return message;
+
 	}
 	
-	private static String getSQLTaskCreateChatTable() {
-		//catch table is exist.
-		
-		return databaseTaskType.createChatTable.getTask();
-		
-	}
+	
 	
 	public static String getTableUUIDNameFromPlayerUUID(String firstUUID,String secondUUID) throws sqlException {
 		DatabaseParametr.LengUUIDPlayer.CompareLenght(firstUUID);
@@ -90,7 +135,10 @@ public abstract class MainDatabase {
 		LengUniqueCodeMessage(20,null),
 		TableNameCharacter(-1,"XXX"),
 		CollectionsCharacter(-1,"YYY"),
-		DivedeCharacterColumn(-1,",");
+		DivedeCharacterColumn(-1,","),
+		BeginFunction(-1,"BEGIN"),
+		EndFunction(-1,"END")
+;
 		private int Lenght;
 		private String character;
 		DatabaseParametr(int i,String character) {
@@ -126,8 +174,9 @@ public abstract class MainDatabase {
 		
 		createChatTable(String.format("create table %s(UUIDSender varchar(%d),"
 				+"Message varchar(%d),UNiqueCodeMessage varchar(%d),"
-				+"%s DateTime);", DatabaseParametr.TableNameCharacter.getCharacter(),DatabaseParametr.LengUUIDPlayer.getLenght(),DatabaseParametr.LengMessage.getLenght(),DatabaseParametr.LengUniqueCodeMessage.getLenght(),DatabaseParametr.CollectionsCharacter.getCharacter()));
-						
+				+"%s DateTime);", DatabaseParametr.TableNameCharacter.getCharacter(),DatabaseParametr.LengUUIDPlayer.getLenght(),DatabaseParametr.LengMessage.getLenght(),DatabaseParametr.LengUniqueCodeMessage.getLenght(),DatabaseParametr.CollectionsCharacter.getCharacter())),
+		createPermisionTable(""),
+		createInsertTrigger("");				
 						
 						private String task;
 						
@@ -142,15 +191,7 @@ public abstract class MainDatabase {
 						
 	}
 	
-	public static void main(String []args) {
-		ArrayList<String> list=new ArrayList<String>();
-		list.add("dasads");
-		list.add("das");
-		String [] x=MainDatabase.getListOfProcessTaskdatabaseTaskType(databaseTaskType.createChatTable, "ahoj", list);
-		for(String xx:x) {
-			System.out.println(xx);
-		}
-	}
+	
 	
 	
 	
