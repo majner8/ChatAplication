@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import DatabaseTest.MainSocketComunication;
+
 
 /**Class which provided that all socket comunication Interface have appropriate enum value,
  * If not, appropriate enum value will be created */

@@ -2,15 +2,15 @@ package TaskConstant;
 
 import java.time.LocalDateTime;
 
+import DatabaseTest.MainSocketComunication.MainSocketComunicationEnum;
+import DatabaseTest.MainSocketComunication.AplicationInteraction.AplicationInteractionEnum;
+import DatabaseTest.MainSocketComunication.ChatComunication.ChatComunicationEnum;
+import DatabaseTest.MainSocketComunication.UserInteraction.UserInteractionEnum;
 import Exception.SocketComunicationException.CertificatIsNotSameException;
 import Exception.SocketComunicationException.EnumSyntaxeError;
 import Exception.SocketComunicationException.IncorectCertifikateSocketComunicationException;
 import Exception.SocketComunicationException.IncorectFormatTaskSocketComunicationException;
 import Exception.SocketComunicationException.IncorrectFormatSocketComunicationException;
-import TaskConstant.MainSocketComunication.AplicationInteraction.AplicationInteractionEnum;
-import TaskConstant.MainSocketComunication.ChatComunication.ChatComunicationEnum;
-import TaskConstant.MainSocketComunication.MainSocketComunicationEnum;
-import TaskConstant.MainSocketComunication.UserInteraction.UserInteractionEnum;
 
 // certifikat-unique kod z databaze
 // kod odesilatele, UniqueKod odeslane tasku.
