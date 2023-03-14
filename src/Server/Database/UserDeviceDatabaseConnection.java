@@ -22,6 +22,7 @@ public class UserDeviceDatabaseConnection implements SocketComunicationInterface
 		
 	}
 	//
+	
 	@Override
 	public void CreateNewChat(SocketComunication message) throws sqlException {
 		// TODO Auto-generated method stub	
