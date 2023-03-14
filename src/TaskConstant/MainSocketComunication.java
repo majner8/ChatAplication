@@ -2,13 +2,20 @@ package TaskConstant;
 
 public class MainSocketComunication {
 
+	
+	
+	
+	
 	public static enum FirstSocketComunicationTaskEnum{
 		
 	}
 	
 	
 	public static enum OtherSocketComunicationTaskEnum{
-		UserRegistration(),CreateNewChat,InsertMessate;
+		UserRegistration(),CreateNewChat,SendMessage//nahrada za inzert Message,
+		
+		ShowMessage,getMessage,
+		;
 		
 	}
 	
@@ -24,7 +31,8 @@ public class MainSocketComunication {
 	public static interface SocketComunicationInterface{
 		public void UserRegistration(SocketComunication message);
 		public void CreateNewChat(SocketComunication message);
-		public void InsertMessage(SocketComunication message);
+		// METODA NAVRATI INT VZJADRUJICI PORADI V CHATU
+		public int InsertMessage(SocketComunication message) throws Exception;
 	}
 	
 	

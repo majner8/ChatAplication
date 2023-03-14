@@ -2,6 +2,7 @@ package TaskConstant;
 
 import java.time.LocalDateTime;
 
+import Constanty.TypeOfUUID;
 import DatabaseTest.MainSocketComunication.MainSocketComunicationEnum;
 import DatabaseTest.MainSocketComunication.AplicationInteraction.AplicationInteractionEnum;
 import DatabaseTest.MainSocketComunication.ChatComunication.ChatComunicationEnum;
@@ -45,6 +46,11 @@ public class SocketComunication {
 	
 	private LocalDateTime TimeOfMessage;
 
+	
+	public TypeOfUUID getUUID() {
+		
+	}
+	
 	/** Method create new SocketComunication
 	 * @param message received message
 	 * @param  Certificate Certificate Code for comunication, if certificate was not assign, put null 

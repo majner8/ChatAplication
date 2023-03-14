@@ -18,7 +18,14 @@ import TaskConstant.SocketComunication;
 
 public abstract class MainDatabase implements ServerManipulation   {
 
+	private static final String path="";
 
+	
+	
+	
+	
+	
+	
 	
  	public static enum DatabaseParametr{
 
@@ -83,11 +90,12 @@ public abstract class MainDatabase implements ServerManipulation   {
 	//dateType, which has unknown quantity, has to be at end of Task.
 	public static enum databaseTaskType{
 			
-			createChatTable(String.format("create table %s(UUIDSender varchar(%d),"
-					+"Message varchar(%d),UNiqueCodeMessage varchar(%d),"
-					+"%s DateTime);", DatabaseParametr.TableNameCharacter.getCharacter(),DatabaseParametr.LengUUIDPlayer.getLenght(),DatabaseParametr.LengMessage.getLenght(),DatabaseParametr.LengUniqueCodeMessage.getLenght(),DatabaseParametr.CollectionsCharacter.getCharacter())),
+			createChatTable(String.format("", DatabaseParametr.TableNameCharacter.getCharacter(),DatabaseParametr.LengUUIDPlayer.getLenght(),DatabaseParametr.LengMessage.getLenght(),DatabaseParametr.LengUniqueCodeMessage.getLenght(),DatabaseParametr.CollectionsCharacter.getCharacter())),
 			createPermisionTable(""),
-			createInsertTrigger(""),SaveMessage(""),VerifyIfTableExist("");				
+			createInsertTrigger(""),SaveMessage(""),VerifyIfTableExist(""),InsertMessage(""),
+			createInsertDateTimeTrigger(""),
+			getOrderOFMessage,
+			InsertMessageGroupChat;				
 							
 					private String URLOfQUery;
 							
@@ -97,7 +105,7 @@ public abstract class MainDatabase implements ServerManipulation   {
 							}
 							
 							public String getURL() {
-								return this.URLOfQUery;
+								return String.join("\\", MainDatabase.path,this.URLOfQUery);
 							}
 			
 							@Override
