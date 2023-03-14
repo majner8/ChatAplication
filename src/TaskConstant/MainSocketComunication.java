@@ -1,5 +1,9 @@
 package TaskConstant;
 
+import java.time.LocalDateTime;
+
+import Exception.sqlException;
+
 public class MainSocketComunication {
 
 	
@@ -12,8 +16,8 @@ public class MainSocketComunication {
 	
 	
 	public static enum OtherSocketComunicationTaskEnum{
-		UserRegistration(),CreateNewChat,SendMessage//nahrada za inzert Message,
-		
+		UserRegistration(),CreateNewChat,SendMessage,//nahrada za inzert Message,
+		//prvne zalozi chat,
 		ShowMessage,getMessage,
 		;
 		
@@ -30,9 +34,10 @@ public class MainSocketComunication {
 	
 	public static interface SocketComunicationInterface{
 		public void UserRegistration(SocketComunication message);
-		public void CreateNewChat(SocketComunication message);
+		public void CreateNewChat(SocketComunication message) throws sqlException;
 		// METODA NAVRATI INT VZJADRUJICI PORADI V CHATU
-		public int InsertMessage(SocketComunication message) throws Exception;
+		public LocalDateTime InsertMessage(SocketComunication message) throws Exception;
+		
 	}
 	
 	

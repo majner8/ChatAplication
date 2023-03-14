@@ -1,6 +1,7 @@
 package TaskConstant;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import Constanty.TypeOfUUID;
 import DatabaseTest.MainSocketComunication.MainSocketComunicationEnum;
@@ -12,6 +13,7 @@ import Exception.SocketComunicationException.EnumSyntaxeError;
 import Exception.SocketComunicationException.IncorectCertifikateSocketComunicationException;
 import Exception.SocketComunicationException.IncorectFormatTaskSocketComunicationException;
 import Exception.SocketComunicationException.IncorrectFormatSocketComunicationException;
+import TaskConstant.SocketComunication.Message.MessageSpecification;
 
 // certifikat-unique kod z databaze
 // kod odesilatele, UniqueKod odeslane tasku.
@@ -36,8 +38,10 @@ public class SocketComunication {
 	private String UNIQUDECodeMessage;
 	private final String UUIDSender;
 	private final String Recipient;
-	private final String Message;
+	private final Message[] Message;
 	private final MainSocketComunicationEnum FirstTask;
+	private ThreadLocal<Integer> orderOfMessage= ThreadLocal.withInitial(()->0);
+	
 
 	
 	private UserInteractionEnum [] UserTask=null;
@@ -174,6 +178,7 @@ public class SocketComunication {
 	
 }
 
+	
 	private String []MakeFieldFromTasksList(Object [] tasks){
 		(String[])tasks;
 		
@@ -269,8 +274,43 @@ public class SocketComunication {
 		return Recipient;
 	}
 
-	public String getMessage() {
-		return Message;
+	public String getMessage(TaskConstant.SocketComunication.Message.MessageSpecification speci) {
+		for(Message x:Message) {
+			if(x.getSpeci()!=speci) {
+				continue;
+			}
+			return x.getMessage();
+		}
+		
+	}	
+	public ArrayList<String> getMessages(Message.MessageSpecification MessageSpeci) {
+		ArrayList<String >x=new ArrayList<String>();
+		for(Message z:Message) {
+			if(z.getSpeci()==MessageSpeci) {
+				x.add(z.getMessage());
+			}
+		}
+		return x;
+	}
+
+	public ArrayList<String> getMessages(Message.MessageSpecification[] MessageSpeci){
+		ArrayList<String>xx=new ArrayList<String>();
+		for(MessageSpecification x:MessageSpeci) {
+			xx.add(this.getMessage(x));
+		}
+		return xx;
+	}
+	public Message getMessage(boolean moveNext) {
+		int number=this.orderOfMessage.get();
+		if(number>=this.Message.length) {
+			return null;
+		}
+		if(!moveNext) {
+			return Message[number];
+		}
+		Message returns=Message[this.orderOfMessage.get()];
+		number=number++;
+		return returns;
 	}
 
 	public MainSocketComunicationEnum getFirstTask() {
@@ -289,7 +329,27 @@ public class SocketComunication {
 		return AplicationTask;
 	}
 	
-	
+
+	public static class Message{
+		private final String message;
+		private final MessageSpecification Speci;
+		
+		public Message(String message,MessageSpecification speci) {
+			this.message=message;
+			this.Speci=speci;
+		}
+		
+		public MessageSpecification getSpeci() {
+			return this.Speci;
+		}
+		public String getMessage() {
+			return this.message;
+		}
+		//slouzi k definovani zprav, pokud socket message obsahuje pole
+		public static enum MessageSpecification{
+			TableName,ColumnList,UUIDSender,Message,UNiqueCodeMessage;
+		}
+	}
 	
 	
 	

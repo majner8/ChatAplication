@@ -15,7 +15,8 @@ public class sqlException extends Exception{
 	public static enum EnumSQLException{
 		
 		UUIDPlayerToLong("UUID code of User have to be 20 character Long. Here receive UUID:"),
-		GroupChatDoesNotExist();
+		GroupChatDoesNotExist(),
+		databaseServerIsUnavaible;
 		
 		private String message;
 		

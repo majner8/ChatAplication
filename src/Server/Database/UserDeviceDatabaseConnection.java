@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 
 import Exception.sqlException;
 import Exception.sqlException.EnumSQLException;
@@ -22,82 +23,42 @@ public class UserDeviceDatabaseConnection implements SocketComunicationInterface
 	}
 	//
 	@Override
-	public void CreateNewChat(SocketComunication message) throws SQLException {
+	public void CreateNewChat(SocketComunication message) throws sqlException {
 		// TODO Auto-generated method stub	
 		
-		String[] queryTask=this.UserConnection.getTaskCreateNewChat();
+		String[] queryTask=DatabaseQueryPatern.getTaskCreateNewChat(message);
 		try {
 			Statement stm=con.createStatement();
 			for(String task:queryTask) {			
-				try {
-				stm.execute(task);
+		
+				stm.execute(task);	
 				}
-				catch(SQLException e) {
-					if(e.getErrorCode()==1050||e.getErrorCode()==1359) {
-						continue; 
-					 }
-					throw e;
-				}
-			}
+			
 		}
-		 catch (SQLException e) {	
-			 e.printStackTrace();
-			 throw e;
+		catch(SQLException e) {
+		if(e.getErrorCode()==1050) {
+			return;
 		 }
+		e.printStackTrace();
+		throw new sqlException(EnumSQLException.databaseServerIsUnavaible);
+		}
+	
 	}
-
 	
-	
+	//metoda musi navratit Datetime, doruceni zpravy
 	@Override
-	public int InsertMessage(SocketComunication message)throws Exception {
+	public LocalDateTime InsertMessage(SocketComunication message)throws Exception {
 		// TODO Auto-generated method stub
 		try {
 			Statement stm=con.createStatement();
-			ResultSet rs;
-			if(message.getUUID().doesItGroupChat()) {
-				if(!stm.executeQuery(DatabaseQueryPatern.getTask(databaseTaskType.VerifyIfTableExist, message.getRecipient(), null)).next()) {
-					throw new sqlException(EnumSQLException.GroupChatDoesNotExist);
-				}
-				rs=stm.executeQuery(DatabaseQueryPatern.getTask(databaseTaskType.InsertMessageGroupChat, message.getRecipient(), null))
-			}
-			
+			ResultSet rs=stm.executeQuery(DatabaseQueryPatern.getTask(databaseTaskType.InsertMessage, message));
+			return rs.getTimestamp(1).toLocalDateTime();
 		}
-		catch(SQLException e) {}
-		
-		if(message.getUUID().doesItGroupChat()) {
-			
-			if(!stm.executeQuery(UserConnection.getTask(databaseTaskType.VerifyIfTableExist, message.getRecipient(), null)).next()) {
-			
-			}
-		}
-		else {
-			
-		}
-		
-		try {
-			
-			Statement stm=con.createStatement();
-			if(!stm.executeQuery(UserConnection.getTask(databaseTaskType.VerifyIfTableExist, message.getRecipient(), null)).next()) {
-				//osetrit, mozna bude treba vytvorit novy task, message neobsahuje primarne task k vytvoreni
-				
-				//Posibly another Thread has already create Chat
-				try {
-					
-				this.CreateNewChat(message)
-			
-				}
-				catch(SQLException e) {}
-			}
-			String sqlInsert=DatabaseQueryPatern.InsertMessageIntoTable(message.getRecipient(), message.getUUIDSender(), message.getMessage(), message.getUNIQUDECodeMessage());
-			//prikaz pro ziskani UUID kodu zpravy.
-			String SQLoderOFMessage= DatabaseQueryPatern.getOrderOfMessage(message.getRecipient(), message.getUNIQUDECodeMessage());
-			stm.executeUpdate(sqlInsert);
-			return stm.executeQuery(SQLoderOFMessage).getInt(1);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		catch(SQLException e) {
 			e.printStackTrace();
+			throw new sqlException(EnumSQLException.databaseServerIsUnavaible);
 		}
-		
+				
 		
 	}
 

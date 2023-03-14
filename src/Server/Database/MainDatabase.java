@@ -95,7 +95,7 @@ public abstract class MainDatabase implements ServerManipulation   {
 			createInsertTrigger(""),SaveMessage(""),VerifyIfTableExist(""),InsertMessage(""),
 			createInsertDateTimeTrigger(""),
 			getOrderOFMessage,
-			InsertMessageGroupChat;				
+			;				
 							
 					private String URLOfQUery;
 							
